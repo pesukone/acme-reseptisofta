@@ -1,0 +1,106 @@
+# This file is used to run operations on CI/CD pipeline against your remotely
+# running application. These operations include:
+#
+# - End-to-end tests for the UI
+# - Integration tests for the API
+# - Database migrations for the database
+#
+# This file contains two types of containers:
+#
+# a) Containers that provide the implementations (tests, migrations, etc).
+#    Typically the build stage of the Dockerfile.build includes these.
+# b) Containers that act as a proxy to provide access to database or
+#    internal services. Typically Taito CLI image is used as a proxy.
+
+version: '3.8'
+services:
+  acme-reseptisofta-client-cicd:
+    container_name: acme-reseptisofta-client-cicd
+    image: acme-reseptisofta-client-builder:latest
+    restart: 'no'
+    networks:
+      - cicd
+    depends_on:
+      - acme-reseptisofta-database-proxy
+    volumes:
+      - "${DOCKER_HOST_PATH}/client:/develop:delegated"
+      - "${DOCKER_HOST_PATH}/shared:/develop/shared:delegated"
+      - "/develop/node_modules"
+      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_mgr_secret}:/run/secrets/DATABASE_PASSWORD" # For GitHub Actions
+    secrets:
+      - DATABASE_PASSWORD
+    environment:
+      taito_running_tests: "true"
+
+  acme-reseptisofta-server-cicd:
+    container_name: acme-reseptisofta-server-cicd
+    image: acme-reseptisofta-server-builder:latest
+    restart: 'no'
+    networks:
+      - cicd
+    depends_on:
+      - acme-reseptisofta-database-proxy
+      # - acme-reseptisofta-services-proxy
+    volumes:
+      - "${DOCKER_HOST_PATH}/server:/develop:delegated"
+      - "${DOCKER_HOST_PATH}/shared:/develop/shared:delegated"
+      - "/develop/node_modules"
+      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_mgr_secret}:/run/secrets/DATABASE_PASSWORD" # For GitHub Actions
+    secrets:
+      - DATABASE_PASSWORD
+    environment:
+      taito_running_tests: "true"
+
+  # Taito CLI container serves as a database proxy
+  acme-reseptisofta-database-proxy:
+    container_name: acme-reseptisofta-database-proxy
+    image: ${taito_image}
+    restart: 'no'
+    user: taito
+    networks:
+      - cicd
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        cd /project
+        taito db proxy:${taito_env} 5432
+    ports:
+      - "5432"
+    volumes:
+      - "${DOCKER_HOST_PATH}/:/project:delegated"
+    environment:
+      taito_docker: 'true'
+      taito_mode: 'ci'
+
+  # Taito CLI container serves as a tcp proxy for redis, etc.
+  # acme-reseptisofta-services-proxy:
+  #   container_name: acme-reseptisofta-services-proxy
+  #   image: ${taito_image}
+  #   restart: 'no'
+  #   user: taito
+  #   networks:
+  #     - cicd
+  #   entrypoint:
+  #     - /bin/sh
+  #     - -c
+  #     - |
+  #       cd /project
+  #       taito forward:redis:${taito_env} 6379
+  #       # TIP: you can define multiple forwards like this:
+  #       # taito forward:redis:${taito_env} 6379 &
+  #       # tail -f /dev/null
+  #   ports:
+  #     - "6379"
+  #   volumes:
+  #     - "${DOCKER_HOST_PATH}/:/project:delegated"
+  #   environment:
+  #     taito_docker: 'true'
+  #     taito_mode: 'ci'
+
+secrets:
+  DATABASE_PASSWORD:
+    file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_mgr_secret}
+
+networks:
+  cicd:

@@ -1,0 +1,10 @@
+# Overrides for dev environment
+
+settings:
+  services:
+    bucket:
+      corsRules:
+        - allowedOrigins:
+            - https://${taito_domain}
+            - http://localhost:9755
+          allowedMethods: ["HEAD", "GET"]

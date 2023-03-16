@@ -1,0 +1,2 @@
+# Dummy dockerfile for 'taito start --prod'
+FROM ghcr.io/taitounited/minio:20220401

@@ -1,0 +1,171 @@
+{
+  "name": "acme-reseptisofta-client",
+  "scripts": {
+    "install:clean": "rm -rf node_modules && npm install",
+    "pretty-quick": "pretty-quick",
+    "lint": "tsc --noEmit && eslint './src/**/*.{ts,tsx}' --ignore-path .eslintignore --quiet",
+    "unit": "BABEL_ENV=test jest src/ --passWithNoTests -t",
+    "test": "echo TODO run tests but not cypress",
+    "cypress:run": "cypress run -s test/integration/**/${test_name}.spec.js",
+    "cypress:open": "cypress open",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "analyze": "ANALYZE=true npm run build && source-map-explorer 'build/assets/*.js' --no-border-checks",
+    "lang:add-locale": "lingui add-locale",
+    "lang:extract": "lingui extract",
+    "lang:compile": "lingui compile",
+    "uikit:preview": "start-storybook -p 1944",
+    "generate:graphql": "graphql-codegen --config codegen.yml"
+  },
+  "dependencies": {
+    "@apollo/client": "3.6.5",
+    "@lingui/macro": "3.14.0",
+    "@lingui/react": "3.14.0",
+    "@loadable/component": "5.15.2",
+    "@sentry/browser": "7.43.0",
+    "apollo3-cache-persist": "0.14.0",
+    "date-fns": "2.28.0",
+    "framer-motion": "6.3.4",
+    "graphql": "16.5.0",
+    "history": "5.3.0",
+    "lodash": "4.17.21",
+    "make-plural": "7.1.0",
+    "react": "18.1.0",
+    "react-aria": "3.15.0",
+    "react-dom": "18.1.0",
+    "react-hot-toast": "2.2.0",
+    "react-icons": "4.3.1",
+    "react-merge-refs": "1.1.0",
+    "react-router": "6.3.0",
+    "react-router-dom": "6.3.0",
+    "react-stately": "3.13.0",
+    "react-use": "17.4.0",
+    "styled-components": "5.3.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.17.10",
+    "@babel/core": "7.18.2",
+    "@babel/preset-env": "7.18.2",
+    "@babel/preset-react": "7.17.12",
+    "@babel/preset-typescript": "7.17.12",
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/typescript": "2.4.11",
+    "@graphql-codegen/typescript-operations": "2.4.0",
+    "@graphql-codegen/typescript-react-apollo": "3.2.14",
+    "@lingui/cli": "3.14.0",
+    "@optimize-lodash/rollup-plugin": "3.0.0",
+    "@rollup/plugin-strip": "2.1.0",
+    "@storybook/addon-actions": "6.5.5",
+    "@storybook/addon-docs": "6.5.5",
+    "@storybook/addon-essentials": "6.5.5",
+    "@storybook/addon-links": "6.5.5",
+    "@storybook/addons": "6.5.5",
+    "@storybook/builder-webpack5": "6.5.5",
+    "@storybook/manager-webpack5": "6.5.5",
+    "@storybook/react": "6.5.5",
+    "@testing-library/jest-dom": "5.16.1",
+    "@testing-library/react": "12.1.2",
+    "@testing-library/user-event": "13.5.0",
+    "@types/jest": "27.4.0",
+    "@types/loadable__component": "5.13.4",
+    "@types/lodash": "4.14.182",
+    "@types/node": "17.0.35",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.5",
+    "@types/react-router-dom": "5.3.3",
+    "@types/styled-components": "5.1.25",
+    "@typescript-eslint/eslint-plugin": "5.26.0",
+    "@typescript-eslint/parser": "5.26.0",
+    "@vitejs/plugin-react": "1.3.2",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "27.5.1",
+    "babel-plugin-macros": "3.1.0",
+    "core-js": "3.22.7",
+    "cypress": "9.3.1",
+    "eslint": "8.16.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-standard": "17.0.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-lodash": "7.4.0",
+    "eslint-plugin-n": "15.2.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-promise": "6.0.0",
+    "eslint-plugin-react": "7.30.0",
+    "eslint-plugin-react-hooks": "4.5.0",
+    "jest": "27.4.7",
+    "pg-promise": "10.11.1",
+    "prettier": "2.6.2",
+    "rollup-plugin-minify-html-literals": "1.2.6",
+    "source-map-explorer": "2.5.2",
+    "storybook-dark-mode": "1.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "4.7.2",
+    "vite": "2.9.9",
+    "vite-plugin-favicon2": "1.1.4",
+    "vite-tsconfig-paths": "3.5.0"
+  },
+  "babel_comment": "Babel is only needed for LinguiJS message extraction and testing with Jest",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-typescript",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "macros"
+    ]
+  },
+  "lingui": {
+    "locales": [
+      "en",
+      "fi"
+    ],
+    "catalogs": [
+      {
+        "path": "src/locales/{locale}/messages",
+        "include": [
+          "src"
+        ]
+      }
+    ],
+    "format": "po",
+    "compileNamespace": "ts"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.tsx?$": "babel-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "^~constants(.*)$": "<rootDir>/src/constants$1",
+      "^~services(.*)$": "<rootDir>/src/services$1",
+      "^~shared(.*)$": "<rootDir>/shared$1",
+      "^~graphql(.*)$": "<rootDir>/src/graphql$1",
+      "^~uikit(.*)$": "<rootDir>/src/components/uikit$1",
+      "^~components(.*)$": "<rootDir>/src/components$1",
+      "^~utils(.*)$": "<rootDir>/src/utils$1"
+    }
+  },
+  "prettier": {
+    "bracketSpacing": true,
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  }
+}
